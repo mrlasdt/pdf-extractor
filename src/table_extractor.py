@@ -6,6 +6,7 @@ import yaml
 
 
 class TableConfig:
+    
     def __init__(
             self, tab_id: int = 0, col_id: int = 0, col_l2r: bool = True, top_prefix: tuple[str, str] = ("", ""),
             bottom_prefix: tuple[str, str] = ("", ""),
@@ -22,7 +23,6 @@ class TableConfig:
 class TableExtractor:
     def __init__(self, table_settings_path: str) -> None:
         super(TableExtractor, self).__init__()
-        self.tables = defaultdict(int)
         with open(table_settings_path) as f:
             self.table_settings = yaml.safe_load(f)
 
@@ -50,14 +50,11 @@ class TableExtractor:
         return lists
 
     def extract_table_from_page(self, cfg: TableConfig, p: Page) -> pd.DataFrame:
-        tab_id = cfg.tab_id
-        if tab_id in self.tables:
-            return self.tables[tab_id]  # if already exists then return
         bbox = self.find_bbox_by_prefix(cfg, p)
         table = p.within_bbox(bbox, relative=False).extract_table(table_settings=self.table_settings)
         table = self.filter_short_list_in_lists(table)  # remove row with nan values
-        self.tables[tab_id] = pd.DataFrame(table[cfg.top_offset:cfg.bottom_offset])
-        return self.tables[tab_id]
+        table = pd.DataFrame(table[cfg.top_offset:cfg.bottom_offset])
+        return table
 
     def extract_value_from_table(self, cfg: TableConfig, p: Page) -> list[str]:
         table = self.extract_table_from_page(cfg, p)

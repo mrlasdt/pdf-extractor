@@ -35,5 +35,6 @@ if __name__ == '__main__':
     save_dir = "results"
     extractor = Extractor()
     for pdf_file in pdf_files:
-        df = extractor(pdf_file).to_csv(Path(save_dir).joinpath(str(Path(pdf_file).stem) + ".csv"))
+        print(pdf_file)
+        extractor(pdf_file).to_csv(Path(save_dir).joinpath(str(Path(pdf_file).stem) + ".csv"))
     
