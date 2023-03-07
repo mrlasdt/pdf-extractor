@@ -1,3 +1,8 @@
+# user
+externals/
+data/
+misc/
+TODO
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
