@@ -228,7 +228,7 @@ pip install -r requirements.txt
 To extract key information from a searchable PDF file, run the following command:
 
 ```sh
-python src/extract.py <path_to_pdf_file>
+python src/extractor.py <path_to_pdf_file>
 ```
 ## Features
 This project includes two main features:
