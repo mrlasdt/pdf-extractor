@@ -1,6 +1,6 @@
 from src.table_extractor import TableConfig
 from src.prefix_extractor import PrefixConfig
-sungju = {
+extractor = {
     "item_code": TableConfig(
         col_id=1,
         top_prefix=("UNIT", 'bottom'),

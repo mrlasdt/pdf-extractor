@@ -1,15 +1,15 @@
 # %%
-from config.global_cfg import HEADERS
-from config.sungju_cfg import sungju as sungju_cfg
+from config.extractor import extractor as extractor_cfg
 from src.prefix_extractor import PrefixExtractor, PrefixConfig
 from src.table_extractor import TableExtractor, TableConfig
 import pandas as pd
 from pdfplumber.page import Page
 import pdfplumber
 from pathlib import Path
-class Extractor(PrefixExtractor, TableExtractor):
-    def __init__(self, cfg: dict = sungju_cfg) -> None:
-        super(Extractor, self).__init__()
+class Extractor:
+    def __init__(self, cfg: dict = extractor_cfg, table_settings_path:str = "config/table_settings.yml") -> None:
+        self.table_extractor = TableExtractor(table_settings_path=table_settings_path)
+        self.prefix_extractor = PrefixExtractor()
         self.cfg = cfg
 
     def load_pdf(self, pdf_path:str) -> Page:
@@ -20,9 +20,9 @@ class Extractor(PrefixExtractor, TableExtractor):
         p = self.load_pdf(pdf_path)
         for key, cfg in self.cfg.items():
             if isinstance(cfg, PrefixConfig): 
-                ddata[key] = self.extract_value_from_prefix(cfg, p) 
+                ddata[key] = self.prefix_extractor.extract_value_from_prefix(cfg, p) 
             elif isinstance(cfg,TableConfig):
-                ddata[key] = self.extract_value_from_table(cfg, p)
+                ddata[key] = self.table_extractor.extract_value_from_table(cfg, p)
             else:
                 raise ValueError("Invalid config")
         return pd.DataFrame.from_dict(ddata)

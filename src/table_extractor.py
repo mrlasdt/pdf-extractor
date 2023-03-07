@@ -2,6 +2,7 @@ from pdfplumber.page import Page
 import pandas as pd
 from collections import defaultdict
 from typing import Optional
+import yaml
 
 
 class TableConfig:
@@ -16,14 +17,14 @@ class TableConfig:
         self.top_offset = top_offset
         self.bottom_prefix = bottom_prefix
         self.bottom_offset = bottom_offset
-        self.table_settings = {"vertical_strategy": "text", "horizontal_strategy": "text",
-                               "text_tolerance": 5, "min_words_vertical": 1, "min_words_horizontal": 5}
 
 
 class TableExtractor:
-    def __init__(self) -> None:
+    def __init__(self, table_settings_path: str) -> None:
         super(TableExtractor, self).__init__()
         self.tables = defaultdict(int)
+        with open(table_settings_path) as f:
+            self.table_settings = yaml.safe_load(f)
 
     @staticmethod
     def find_bbox_by_prefix(cfg: TableConfig, p: Page) -> tuple[float, float, float, float]:
@@ -53,7 +54,7 @@ class TableExtractor:
         if tab_id in self.tables:
             return self.tables[tab_id]  # if already exists then return
         bbox = self.find_bbox_by_prefix(cfg, p)
-        table = p.within_bbox(bbox, relative=False).extract_table(table_settings=cfg.table_settings)
+        table = p.within_bbox(bbox, relative=False).extract_table(table_settings=self.table_settings)
         table = self.filter_short_list_in_lists(table)  # remove row with nan values
         self.tables[tab_id] = pd.DataFrame(table[cfg.top_offset:cfg.bottom_offset])
         return self.tables[tab_id]

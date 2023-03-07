@@ -1,0 +1,6 @@
+
+vertical_strategy: "text"
+horizontal_strategy: "text"
+text_tolerance: 5
+min_words_vertical: 1
+min_words_horizontal: 5
